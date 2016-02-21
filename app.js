@@ -24,7 +24,7 @@ swig.setDefaults({cache: false});
 
 app.use("/wiki", require("./routes/wiki"));
 app.use("/search", require("./routes/search"));
-
+app.use("/users", require("./routes/users"));
 
 app.get("/", function(req, res, next) {
 	Page.find({})
@@ -34,6 +34,15 @@ app.get("/", function(req, res, next) {
 		res.render("index", {pages: pages} )
 	})
 })
+
+app.get("/", function(req, res, next) {
+	console.log("Get /users");
+	User.find().exec()
+	.then(function(users){
+		res.render("users", {users: users} );
+	})
+	.catch(next);
+});
 
 
 app.listen(process.env.PORT || 1337, function() {
