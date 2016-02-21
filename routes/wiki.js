@@ -53,8 +53,12 @@ router.post("/", function(req, res, next) {
 router.get('/:urlTitle', function (req, res, next) {
   Page.findOne({ urlTitle: req.params.urlTitle }).exec()
   .then(function(foundPage){
-    console.log(foundPage);
-    res.render("wikipage", {page: foundPage, tags: foundPage.tags.join(" ")});
+  	User.findOne({_id: foundPage.author}).exec()
+  	.then(function(user){
+  	res.render("wikipage", {page: foundPage, 
+  							author: user,
+  							tags: foundPage.tags.join(" ") });
+  	})
   })
   .catch(next); // assuming you replaced mpromise
 });
