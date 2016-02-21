@@ -23,6 +23,7 @@ app.use(express.static(path.join(__dirname, '/public')));
 swig.setDefaults({cache: false});
 
 app.use("/wiki", require("./routes/wiki"));
+app.use("/search", require("./routes/search"));
 
 
 app.get("/", function(req, res, next) {
@@ -32,10 +33,8 @@ app.get("/", function(req, res, next) {
 		console.log(pages);
 		res.render("index", {pages: pages} )
 	})
-
-	// res.render("index");
-
 })
+
 
 app.listen(process.env.PORT || 1337, function() {
 	console.log("server is running");

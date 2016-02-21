@@ -14,7 +14,7 @@ var pageSchema = new Schema({
 	status: {type: String, enum: ["open", "closed"]},
 	date: {type: Date, default: Date.now},
 	author: {type: mongoose.Schema.Types.ObjectId, ref: "User"},
-	tags: [String]
+	tags: {type: [String]}
 });
 
 var userSchema = new Schema({
@@ -23,9 +23,7 @@ var userSchema = new Schema({
 })
 
 pageSchema.pre("validate", function(next) {
-
 	this.urlTitle = generateUrlTitle(this.title);
-	console.log("does it go into PRE")
 	next();
 })
 
@@ -33,9 +31,43 @@ pageSchema.virtual("route").get(function() {
 	return "/wiki/" + this.urlTitle;
 })
 
+pageSchema.statics.findByTag = function(tag) {
+	return this.find({ tags: tag }).exec();
+}
+
+pageSchema.methods.findSimilar = function(){
+	
+	return this.model("Page").find( {tags: { $in: this.tags }, 
+																	_id: { $ne: this._id} }).exec();
+}
+
+userSchema.statics.findOrCreate = function(name, email){
+	console.log("Made it!")
+	var user = this.findOne( {email: email}).exec().
+	then(function(foundUser){
+		if(foundUser){
+			console.log("Found User")
+			return foundUser;
+		}else{
+			console.log("Did not find user.")
+			var newUser = new User({ name: name, email: email});
+			return newUser.save();
+		}
+	})
+	return user;
+}
+
+//Find user in Users
+	
+
+	//If returned is null (user doesn't exist), create with info
+
+	//Get ID of existing or new ID
+
+	//Attach _id to page object
 
 var Page = mongoose.model("Page", pageSchema);
-var User = mongoose.model("User", pageSchema);
+var User = mongoose.model("User", userSchema);
 
 module.exports = {
 	Page: Page,
