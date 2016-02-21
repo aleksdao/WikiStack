@@ -43,15 +43,16 @@ pageSchema.methods.findSimilar = function(){
 
 userSchema.statics.findOrCreate = function(name, email){
 	console.log("Made it!")
-	var user = this.findOne( {email: email}).exec().
+	var self = this;
+	var user = self.findOne( {email: email}).exec().
 	then(function(foundUser){
 		if(foundUser){
 			console.log("Found User")
 			return foundUser;
 		}else{
 			console.log("Did not find user.")
-			var newUser = new User({ name: name, email: email});
-			return newUser.save();
+			// var newUser = new User({ name: name, email: email});
+			return self.create({ name: name, email: email});
 		}
 	})
 	return user;
