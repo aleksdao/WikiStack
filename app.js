@@ -35,16 +35,6 @@ app.get("/", function(req, res, next) {
 	})
 })
 
-app.get("/", function(req, res, next) {
-	console.log("Get /users");
-	User.find().exec()
-	.then(function(users){
-		res.render("users", {users: users} );
-	})
-	.catch(next);
-});
-
-
 app.listen(process.env.PORT || 1337, function() {
 	console.log("server is running");
 })
