@@ -1,9 +1,15 @@
 var express = require("express");
 var app = express();
 var swig = require("swig");
+require("./filters")(swig);
 var path = require("path");
 var morgan = require("morgan");
 var bodyParser = require("body-parser")
+var models = require("./models/");
+
+
+var Page = models.Page;
+var User = models.User;
 
 app.set("views", path.join(__dirname + "/views"));
 app.set("view engine", "html");
@@ -20,7 +26,15 @@ app.use("/wiki", require("./routes/wiki"));
 
 
 app.get("/", function(req, res, next) {
-	res.render("index");
+	Page.find({})
+	.exec()
+	.then(function(pages) {
+		console.log(pages);
+		res.render("index", {pages: pages} )
+	})
+
+	// res.render("index");
+
 })
 
 app.listen(process.env.PORT || 1337, function() {
