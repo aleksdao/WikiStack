@@ -5,7 +5,7 @@
   <h4>by <a href="/users/{{author.id}}">{{ author.name }}</a></h4>
   <div>TAGS: {{tags}}</div>
   <hr/>
-  <div class="page-body">{{ page.content }}</div>
+  <div class="page-body">{% autoescape false %}{{ page.renderedContent }}{% endautoescape %}</div>
   <hr/>
   <a href="{{ urlTitle }}/edit" class="btn btn-primary">edit this page</a>
   <a href="{{ urlTitle }}/delete" class="btn btn-danger">delete this page</a>
