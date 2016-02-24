@@ -48,24 +48,29 @@ describe("Validation", function(){
 describe("Statics", function(){
 
 	var uniqueName = 'UniqueNameUsedNowhereElse',
-		uniqueemail = 'uniqueemail@uniqueemail.com'
+		uniqueEmail = 'uniqueemail@uniqueemail.com'
 		uniqueTag = 'UniqueTagUsedNowhereElse';
 		uniqueTagUnused = 'UniqueTagUsedNowhere';
+		userId = -1;
 
 	beforeEach(function(done) {
-	    Page.create({
-	        title: 'Test Page',
-	        content: 'Here is some content.',
-	        tags: ['test', uniqueTag]
-	    })
-	    .then(function(){
-	    	User.create({
-	    		name: uniqueName,
-	    		email: uniqueemail
-	    	}, done);
-	    })
+
+		User.create({
+			name: uniqueName,
+			email: uniqueEmail
+		})
+		.then(function(usr){
+			userId = usr._id
+			Page.create({
+			    title: 'Test Page',
+			    content: 'Here is some content.',
+			    tags: ['test', uniqueTag],
+			    author: usr._id
+			}, done);
+		});
 	})
 
+	//Finy By Tag
 	it('gets pages with the search tag', function(done) {
     	Page.findByTag('UniqueTagUsedNowhereElse').then(function (pages) {
         	expect(pages).to.have.lengthOf(1);
@@ -79,13 +84,37 @@ describe("Statics", function(){
 	    	done();
 		}).then(null, done);
     })
+
+    //Find or Create (User)
+    it("findOrCreate returns user, if one exists", function(done){
+    	User.findOrCreate(uniqueName, uniqueEmail)
+    	.then(function(user){
+    		expect(user._id + "").to.equal(userId + "");
+    		done();
+    	})
+    	.then(null, done)
+    })
+
+    it("Otherwise, findOrCreate creates a new user", function(done){
+    	User.findOrCreate("newName", "new@new.com")
+    	.then(function(user){
+    		expect(user._id + "").not.to.equal(userId + "");
+    		User.remove( {email: "new@new.com"}, function(err){
+    			if(err) throw err;
+    		});
+    		done();
+    	})
+    	.then(null, done)
+    });
+
+
     
     afterEach(function(done){
     	Page.remove( {tags: uniqueTag}, function(err){
     		if(err) throw err;
     	})
     	.then(function(){
-    		User.remove( {email: uniqueemail}, function(err){
+    		User.remove( {email: uniqueEmail}, function(err){
     			if(err) throw err;
     			done();
     		})
