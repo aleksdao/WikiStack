@@ -46,12 +46,24 @@ describe("Validation", function(){
 })
 
 describe("Statics", function(){
+
+	var uniqueName = 'UniqueNameUsedNowhereElse',
+		uniqueemail = 'uniqueemail@uniqueemail.com'
+		uniqueTag = 'UniqueTagUsedNowhereElse';
+		uniqueTagUnused = 'UniqueTagUsedNowhere';
+
 	beforeEach(function(done) {
 	    Page.create({
 	        title: 'Test Page',
 	        content: 'Here is some content.',
-	        tags: ['test', 'UniqueTagUsedNowhereElse']
-	    }, done );
+	        tags: ['test', uniqueTag]
+	    })
+	    .then(function(){
+	    	User.create({
+	    		name: uniqueName,
+	    		email: uniqueemail
+	    	}, done);
+	    })
 	})
 
 	it('gets pages with the search tag', function(done) {
@@ -60,12 +72,24 @@ describe("Statics", function(){
         	done();
     	}).then(null, done);
     })
+
+    it("does not return false positives", function(done){
+		Page.findByTag(uniqueTagUnused).then(function (pages) {
+	    	expect(pages).to.have.lengthOf(0);
+	    	done();
+		}).then(null, done);
+    })
     
     afterEach(function(done){
-    	Page.remove( {tags: 'UniqueTagUsedNowhereElse'}, function(err){
+    	Page.remove( {tags: uniqueTag}, function(err){
     		if(err) throw err;
-    		done();
-    	});
+    	})
+    	.then(function(){
+    		User.remove( {email: uniqueemail}, function(err){
+    			if(err) throw err;
+    			done();
+    		})
+    	})
     });
 
 })
