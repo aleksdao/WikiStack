@@ -47,10 +47,10 @@ describe("Validation", function(){
 
 describe("Statics", function(){
 
-	var uniqueName = 'UniqueNameUsedNowhereElse',
-		uniqueEmail = 'uniqueemail@uniqueemail.com'
-		uniqueTag = 'UniqueTagUsedNowhereElse';
-		uniqueTagUnused = 'UniqueTagUsedNowhere';
+	var uniqueName = 'Unique_Name_Used_Nowhere_Else';
+		uniqueEmail = 'uniqueemail@uniqueemail.com';
+		uniqueTag = 'Unique_Tag_Used_Nowhere_Else';
+		uniqueTagUnused = 'Unique_Tag_Used_Nowhere';
 		userId = -1;
 
 	beforeEach(function(done) {
@@ -70,9 +70,9 @@ describe("Statics", function(){
 		});
 	})
 
-	//Finy By Tag
+	//Find By Tag
 	it('gets pages with the search tag', function(done) {
-    	Page.findByTag('UniqueTagUsedNowhereElse').then(function (pages) {
+    	Page.findByTag(uniqueTag).then(function (pages) {
         	expect(pages).to.have.lengthOf(1);
         	done();
     	}).then(null, done);
@@ -106,8 +106,6 @@ describe("Statics", function(){
     	})
     	.then(null, done)
     });
-
-
     
     afterEach(function(done){
     	Page.remove( {tags: uniqueTag}, function(err){
@@ -120,5 +118,107 @@ describe("Statics", function(){
     		})
     	})
     });
+})
+
+describe("Schema Methods", function(){
+	var a = "new_test_tag_A";
+		b = "new_test_tag_B";
+		c = "new_test_tag_C";
+		d = "new_test_tag_D";
+
+	var tags = [a,b,c,d,b];
+
+	beforeEach(function(done){
+		//Create pages tagged: [a,b], [b,c], [c,d], [d,b]
+		for(var i = 0; i < 4; i++){
+			var readableIndex = i+1;
+			Page.create({
+				title: "Page " + readableIndex,
+				content: "This is page " + readableIndex,
+				tags: [ tags[i], tags[i+1] ]
+			})
+		}
+
+		done();
+	})
+
+	it("Finds pages which share a tag", function(done){
+		Page.findOne( {title: "Page 1", content: "This is page 1"} )
+		.then(function(pageOne){
+			return pageOne.findSimilar();
+		})
+		.then(function(similarPages){
+			//Similar pages - List of pages tagged with either test_tag_a or b
+			expect(similarPages).to.exist;
+			expect(similarPages).not.to.be.empty;
+			expect(similarPages.length).to.equal(2);
+		})
+		.then(null, done);
+
+		Page.findOne( {title: "Page 2", content: "This is page 2"} )
+		.then(function(pageTwo){
+			pageTwo.findSimilar();
+		})
+		.then(function(similarPages){
+			expect(similarPages).to.exist;
+			expect(similarPages).not.to.be.empty;
+			expect(similarPages.length).to.equal(3);
+		})
+		.then(null, done);
+
+		Page.findOne( {title: "Page 3", content: "This is page 3"} )
+		.then(function(pageThree){
+			return pageThree.findSimilar();
+		})
+		.then(function(similarPages){
+			expect(similarPages).to.exist;
+			expect(similarPages).not.to.be.empty;
+			expect(similarPages.length).to.equal(2);
+		})
+		.then(null, done);
+
+		Page.findOne( {title: "Page 4", content: "This is page 4"} )
+		.then(function(pageFour){
+			return pageFour.findSimilar();
+		})
+		.then(function(similarPages){
+			expect(similarPages).to.exist;
+			expect(similarPages).not.to.be.empty;
+			expect(similarPages.length).to.equal();
+		})
+		.then(null, done);
+
+	})
+
+	// it("Does not find any false positives", function(){
+	// 	Page.findOne( {title: "Page 1", content: "This is page 1"} )
+	// 	.then(function(pageOne){
+	// 		return pageOne.findSimilar();
+	// 	}).
+	// 	then(function(similarPages){
+	// 		findOne({title: "Page 2"})
+	// 		.then(function(page2){
+	// 			expect(similarPages).to.have(page2);
+	// 		})
+
+	// 		findOne({title: "Page 3"})
+	// 		.then(function(page3){
+	// 			expect(similarPages).not.to.have(page3);
+	// 		})
+
+	// 		findOne({title: "Page 4"})
+	// 		.then(function(page4){
+	// 			expect(similarPages).not.to.have(page4);
+	// 		})
+	// 	})
+	// })
+
+	afterEach(function(done){
+		Page.remove( { tags: {$in: tags} },  function(err){
+			if(err) throw err;
+			done();
+		})
+	})
 
 })
+
