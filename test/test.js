@@ -44,3 +44,28 @@ describe("Validation", function(){
 	})
 
 })
+
+describe("Statics", function(){
+	beforeEach(function(done) {
+	    Page.create({
+	        title: 'Test Page',
+	        content: 'Here is some content.',
+	        tags: ['test', 'UniqueTagUsedNowhereElse']
+	    }, done );
+	})
+
+	it('gets pages with the search tag', function(done) {
+    	Page.findByTag('UniqueTagUsedNowhereElse').then(function (pages) {
+        	expect(pages).to.have.lengthOf(1);
+        	done();
+    	}).then(null, done);
+    })
+    
+    afterEach(function(done){
+    	Page.remove( {tags: 'UniqueTagUsedNowhereElse'}, function(err){
+    		if(err) throw err;
+    		done();
+    	});
+    });
+
+})
