@@ -69,7 +69,8 @@ router.get('/:urlTitle/similar', function(req, res, next){
 		return page.findSimilar();
 	})
 	.then(function(pages){
-		res.json(pages);
+		res.render("query", { pages: pages,
+					  mode: "similar" });
 	})
 	.catch(next);
 

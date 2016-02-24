@@ -35,11 +35,12 @@ describe("Validation", function(){
 		})
 	})
 
-	// it("Automatically generates a url in pre-validation", function(done){
-	// 	page.validate(function(err){
-	// 		expect(err.errors).not.to.have.property("urlTitle");
-	// 		done();
-	// 	})
-	// })
+	it("Automatically generates a url in pre-validation", function(done){
+		page.validate(function(err){
+			//console.log("ERROR", err);
+			expect(err.errors).not.to.have.property("urlTitle");
+			done();
+		})
+	})
 
 })

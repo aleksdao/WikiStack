@@ -43,7 +43,7 @@ pageSchema.statics.findByTag = function(tag) {
 pageSchema.methods.findSimilar = function(){
 	
 	return this.model("Page").find( {tags: { $in: this.tags }, 
-																	_id: { $ne: this._id} }).exec();
+									  _id: { $ne: this._id} }).exec();
 }
 
 userSchema.statics.findOrCreate = function(name, email){
@@ -88,7 +88,6 @@ function generateUrlTitle(title) {
 		var urlTitle = title.replace(spaces, "_").replace(nonAlphaNum, "");
 		return urlTitle;
 	}
-	else {
-		return Math.random().toString(36).substring(2,7);
-	}
+
+	return Math.random().toString(36).substring(2,7);
 }
