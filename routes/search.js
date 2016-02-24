@@ -21,7 +21,7 @@ router.get("/query", function(req, res, next) {
 		return Page.findByTag(tag)
 	})
 	.then(function(pages) {
-		res.render("query", { pages: pages[0],
+		res.render("taggedPages", { pages: pages[0],
 					  mode: "query" });
 	})
 	.catch(next);
