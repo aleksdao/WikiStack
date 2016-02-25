@@ -142,76 +142,9 @@ describe("Schema Methods", function(){
 		done();
 	})
 
-	it("Finds pages which share a tag", function(done){
-		Page.findOne( {title: "Page 1", content: "This is page 1"} )
-		.then(function(pageOne){
-			return pageOne.findSimilar();
-		})
-		.then(function(similarPages){
-			//Similar pages - List of pages tagged with either test_tag_a or b
-			expect(similarPages).to.exist;
-			expect(similarPages).not.to.be.empty;
-			expect(similarPages.length).to.equal(2);
-		})
-		.then(null, done);
-
-		Page.findOne( {title: "Page 2", content: "This is page 2"} )
-		.then(function(pageTwo){
-			pageTwo.findSimilar();
-		})
-		.then(function(similarPages){
-			expect(similarPages).to.exist;
-			expect(similarPages).not.to.be.empty;
-			expect(similarPages.length).to.equal(3);
-		})
-		.then(null, done);
-
-		Page.findOne( {title: "Page 3", content: "This is page 3"} )
-		.then(function(pageThree){
-			return pageThree.findSimilar();
-		})
-		.then(function(similarPages){
-			expect(similarPages).to.exist;
-			expect(similarPages).not.to.be.empty;
-			expect(similarPages.length).to.equal(2);
-		})
-		.then(null, done);
-
-		Page.findOne( {title: "Page 4", content: "This is page 4"} )
-		.then(function(pageFour){
-			return pageFour.findSimilar();
-		})
-		.then(function(similarPages){
-			expect(similarPages).to.exist;
-			expect(similarPages).not.to.be.empty;
-			expect(similarPages.length).to.equal();
-		})
-		.then(null, done);
-
-	})
-
-	// it("Does not find any false positives", function(){
-	// 	Page.findOne( {title: "Page 1", content: "This is page 1"} )
-	// 	.then(function(pageOne){
-	// 		return pageOne.findSimilar();
-	// 	}).
-	// 	then(function(similarPages){
-	// 		findOne({title: "Page 2"})
-	// 		.then(function(page2){
-	// 			expect(similarPages).to.have(page2);
-	// 		})
-
-	// 		findOne({title: "Page 3"})
-	// 		.then(function(page3){
-	// 			expect(similarPages).not.to.have(page3);
-	// 		})
-
-	// 		findOne({title: "Page 4"})
-	// 		.then(function(page4){
-	// 			expect(similarPages).not.to.have(page4);
-	// 		})
-	// 	})
-	// })
+	xit("returns the correct number of similar pages", function(){});
+	xit("returns pages which have common tags", function(){});
+	xit("does not return false positives", function(){});
 
 	afterEach(function(done){
 		Page.remove( { tags: {$in: tags} },  function(err){
@@ -222,3 +155,14 @@ describe("Schema Methods", function(){
 
 })
 
+describe("Virtual Attributes", function(done){
+
+	xit("Renders markdown into html", function(){
+		Page.create({
+			title: "Markdown Page",
+			content: "[edentem](http://haskell.org/) torpor",
+			tags: [ "markdown" ] 
+		})
+	});
+
+})

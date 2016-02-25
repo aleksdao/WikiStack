@@ -41,13 +41,11 @@ pageSchema.statics.findByTag = function(tag) {
 }
 
 pageSchema.methods.findSimilar = function(){
-	
 	return this.model("Page").find( {tags: { $in: this.tags }, 
 									  _id: { $ne: this._id} }).exec();
 }
 
 userSchema.statics.findOrCreate = function(name, email){
-	console.log("Made it!")
 	var self = this;
 	var user = self.findOne( {email: email}).exec().
 	then(function(foundUser){
@@ -63,29 +61,16 @@ userSchema.statics.findOrCreate = function(name, email){
 	return user;
 }
 
-//Find user in Users
-	
-
-	//If returned is null (user doesn't exist), create with info
-
-	//Get ID of existing or new ID
-
-	//Attach _id to page object
-
-var Page = mongoose.model("Page", pageSchema);
-var User = mongoose.model("User", userSchema);
-
 module.exports = {
-	Page: Page,
-	User: User
+	Page: mongoose.model("Page", pageSchema),
+	User: mongoose.model("User", userSchema)
 };
 
+//Helper Functions
 
 function generateUrlTitle(title) {
 	if(title) {
-		var spaces = / /g;
-		var nonAlphaNum = /[^a-z0-9_]/ig;
-		var urlTitle = title.replace(spaces, "_").replace(nonAlphaNum, "");
+		var urlTitle = title.replace(/ /g, "_").replace(/[^a-z0-9_]/ig, "");
 		return urlTitle;
 	}
 

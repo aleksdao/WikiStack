@@ -8,11 +8,6 @@ router.get("/", function(req, res, next) {
 	res.redirect("/");
 })
 
-router.get("/add", function(req, res, next) {
-	res.render("addpage");
-})
-
-
 router.post("/", function(req, res, next) {
 
 	var author = req.body.name;
@@ -22,7 +17,7 @@ router.post("/", function(req, res, next) {
 	.then(function(user){
 		console.log("THE USER'S ID IS", user._id)
 		var page = new Page({
-			title: req.body.title,
+			title: req.body.title,   
 			content: req.body.content,
 			tags: req.body.tags.split(" "),
 			author: user._id
@@ -35,30 +30,18 @@ router.post("/", function(req, res, next) {
 		// return user;
 	})
 	.then(null, next);
-
-	
-
-	// var page = new Page({
-	// 	title: req.body.title,
-	// 	content: req.body.content,
-	// 	tags: req.body.tags.split(" ")
-	// 	author: 
-	// })
-
-	// page.save().then(function(savedPage) {
-	// 	res.redirect(savedPage.route);
-	// }).then(null, next);
 })
 
+router.get("/add", function(req, res, next) {
+	res.render("addpage");
+}) 
+
 router.get('/:urlTitle', function (req, res, next) {
-  Page.findOne({ urlTitle: req.params.urlTitle }).exec()
+  Page.findOne({ urlTitle: req.params.urlTitle })
+  .populate("author")
   .then(function(foundPage){
-  	User.findOne({_id: foundPage.author}).exec()
-  	.then(function(user){
-  	res.render("wikipage", {page: foundPage, 
-  							author: user,
+  	res.render("wikipage", {page: foundPage,
   							tags: foundPage.tags.join(" ") });
-  	})
   })
   .catch(next); // assuming you replaced mpromise
 });
